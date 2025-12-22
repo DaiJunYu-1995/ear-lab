@@ -6,13 +6,13 @@ import { Play, Pause, Disc, Music4 } from 'lucide-react';
 
 interface SongFile {
   id: string;
-  name: string; 
-  title: string; 
+  name: string; // Filename part
+  title: string; // Display Title
   language: 'Chinese' | 'English';
   paths: {
-    cover: string; 
-    lyrics: string; 
-    audio: string; 
+    cover: string; // /song_corpus/picture/X.Name.png
+    lyrics: string; // /song_corpus/lyrics/X.Name.txt
+    audio: string; // /song_corpus/wav/X.Name.mp3
   };
   fallback: {
     cover: string;
@@ -20,24 +20,26 @@ interface SongFile {
   }
 }
 
-// Helper to generate paths automatically - CHANGED TO RELATIVE PATHS
+// Helper to generate paths automatically with Fallbacks
 const generateSong = (id: string, name: string, title: string, lang: 'Chinese' | 'English', fallbackId: number): SongFile => ({
   id,
   name,
   title,
   language: lang,
   paths: {
-    // 使用 ./ 确保从当前目录开始查找，适配 GitHub Pages 子目录
-    cover: `./song_corpus/picture/${id}.${name}.png`,
-    lyrics: `./song_corpus/lyrics/${id}.${name}.txt`,
-    audio: `./song_corpus/wav/${id}.${name}.mp3`,
+    cover: `/song_corpus/picture/${id}.${name}.png`,
+    lyrics: `/song_corpus/lyrics/${id}.${name}.txt`,
+    audio: `/song_corpus/wav/${id}.${name}.mp3`,
   },
   fallback: {
+    // Picsum for images
     cover: `https://picsum.photos/id/${fallbackId}/400/300`,
+    // SoundHelix for audio
     audio: `https://www.soundhelix.com/examples/mp3/SoundHelix-Song-${(parseInt(id) % 16) + 1}.mp3`
   }
 });
 
+// UPDATED DATA CONFIGURATION TO MATCH LOCAL song_corpus
 const SONG_CORPUS: SongFile[] = [
   generateSong("1", "歌谣", "歌谣", "Chinese", 10),
   generateSong("2", "有光的地方", "有光的地方", "Chinese", 11),
@@ -51,7 +53,10 @@ const SONG_CORPUS: SongFile[] = [
   generateSong("50", "AI for good", "AI for good", "English", 19),
 ];
 
+// --- INFINITE QUEUE COMPONENT ---
+
 export const AudioShowcase: React.FC = () => {
+  // Config
   const CARD_WIDTH = 180; 
   const CARD_HEIGHT = 135; 
   const GAP = 40;
@@ -59,21 +64,26 @@ export const AudioShowcase: React.FC = () => {
   const TOTAL_ITEMS = SONG_CORPUS.length;
   const LOOP_WIDTH = TOTAL_ITEMS * ITEM_FULL_WIDTH;
   
+  // State
   const [scrollX, setScrollX] = useState(0); 
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
   const [startScroll, setStartScroll] = useState(0);
   
+  // Audio State
   const [playingId, setPlayingId] = useState<string | null>(null);
-  const [progress, setProgress] = useState(0); 
+  const [progress, setProgress] = useState(0); // Tracking playback progress (0 to 1)
 
+  // Ref to track playing state inside requestAnimationFrame without dependencies
   const isPlayingRef = useRef(false); 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Sync ref with state
   useEffect(() => {
     isPlayingRef.current = !!playingId;
   }, [playingId]);
 
+  // Check if playing card moved out of focus (Blurred Window)
   useEffect(() => {
     if (!playingId) return;
 
@@ -85,6 +95,7 @@ export const AudioShowcase: React.FC = () => {
     if (currentPos < 0) currentPos += LOOP_WIDTH;
     if (currentPos > LOOP_WIDTH / 2) currentPos -= LOOP_WIDTH;
 
+    // Threshold: if absolute distance > 400 (approx 2 cards away), stop playing.
     if (Math.abs(currentPos) > 450) {
         if (audioRef.current) {
             audioRef.current.pause();
@@ -95,10 +106,12 @@ export const AudioShowcase: React.FC = () => {
     }
   }, [scrollX, playingId]);
 
+  // Animation Frame
   const requestRef = useRef<number>(null);
   const lastTimeRef = useRef<number>(null);
   const AUTO_SPEED = 0.8; 
 
+  // Cleanup audio on unmount
   useEffect(() => {
     return () => {
       if (audioRef.current) {
@@ -108,7 +121,9 @@ export const AudioShowcase: React.FC = () => {
     };
   }, []);
 
+  // --- AUDIO HANDLERS ---
   const handlePlay = async (song: SongFile) => {
+    // 1. If clicking the currently playing song -> Stop it and Resume Motion
     if (playingId === song.id) {
       if (audioRef.current) {
         audioRef.current.pause();
@@ -119,17 +134,21 @@ export const AudioShowcase: React.FC = () => {
       return;
     }
 
+    // 2. Switching to a new song -> Stop previous
     if (audioRef.current) {
       audioRef.current.pause();
       audioRef.current = null;
     }
 
-    setPlayingId(song.id); 
+    // 3. Setup new song logic
+    setPlayingId(song.id); // Update UI immediately
     setProgress(0);
 
+    // Audio Object
     const audio = new Audio();
     audioRef.current = audio;
 
+    // --- FALLBACK LOGIC ---
     let usedFallback = false;
 
     const playAudio = async () => {
@@ -144,25 +163,29 @@ export const AudioShowcase: React.FC = () => {
         }
     };
 
+    // --- TIME UPDATE HANDLER ---
     audio.ontimeupdate = () => {
       if (audioRef.current === audio && audio.duration) {
         setProgress(audio.currentTime / audio.duration);
       }
     };
 
+    // Error Listener for 404 or format issues
     audio.onerror = () => {
         if (!usedFallback) {
-            console.warn(`Local file ${song.paths.audio} failed. Switching to fallback.`);
+            console.warn(`Local file ${song.paths.audio} failed. Switching to fallback: ${song.fallback.audio}`);
             usedFallback = true;
             audio.src = song.fallback.audio;
             audio.load();
             playAudio();
         } else {
+            console.error("Both local and fallback audio failed.");
             setPlayingId(null);
             setProgress(0);
         }
     };
 
+    // Events
     audio.onended = () => {
       if (audioRef.current === audio) {
         setPlayingId(null);
@@ -170,12 +193,14 @@ export const AudioShowcase: React.FC = () => {
       }
     };
 
+    // Start with Local Path
     audio.src = song.paths.audio;
     playAudio();
   };
 
+  // --- PROGRESS BAR SEEKING ---
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>, songId: string) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Don't trigger play/pause on the card
     if (playingId !== songId || !audioRef.current || !audioRef.current.duration) return;
 
     const rect = e.currentTarget.getBoundingClientRect();
@@ -186,6 +211,7 @@ export const AudioShowcase: React.FC = () => {
     setProgress(clickedProgress);
   };
 
+  // --- ANIMATION LOOP ---
   const animate = (time: number) => {
     if (!isDragging && !isPlayingRef.current) {
       if (lastTimeRef.current !== null) {
@@ -201,6 +227,7 @@ export const AudioShowcase: React.FC = () => {
     return () => cancelAnimationFrame(requestRef.current!);
   }, [isDragging]); 
 
+  // --- DRAG HANDLERS ---
   const onDragStart = (e: React.MouseEvent | React.TouchEvent) => {
     setIsDragging(true);
     const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
@@ -220,6 +247,7 @@ export const AudioShowcase: React.FC = () => {
     lastTimeRef.current = null;
   };
 
+  // --- RENDER CARD LOGIC ---
   const renderCard = (song: SongFile, index: number) => {
     const basePos = index * ITEM_FULL_WIDTH;
     let currentPos = (basePos + scrollX) % LOOP_WIDTH;
@@ -247,7 +275,7 @@ export const AudioShowcase: React.FC = () => {
         className="absolute top-1/2 left-1/2 cursor-pointer transition-transform duration-100 ease-out will-change-transform"
         style={{
           width: CARD_WIDTH,
-          height: CARD_HEIGHT + 35,
+          height: CARD_HEIGHT + 35, // Extra height for progress bar container
           marginLeft: -CARD_WIDTH / 2, 
           marginTop: - (CARD_HEIGHT + 35) / 2, 
           transform: `translateX(${currentPos}px) translateZ(${isPlaying ? 50 : translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
@@ -259,6 +287,7 @@ export const AudioShowcase: React.FC = () => {
             if (opacity > 0.5) handlePlay(song);
         }}
       >
+        {/* Main Card Body */}
         <div 
           className={`
             relative w-full h-[135px] rounded-xl overflow-hidden shadow-lg 
@@ -298,6 +327,7 @@ export const AudioShowcase: React.FC = () => {
           )}
         </div>
 
+        {/* External Progress Bar (Below Card) */}
         <div 
           className={`
             mt-3 w-full h-4 relative flex items-center transition-all duration-300
@@ -305,17 +335,21 @@ export const AudioShowcase: React.FC = () => {
           `}
           onClick={(e) => handleSeek(e, song.id)}
         >
+          {/* Background Track */}
           <div className="w-full h-1.5 bg-gray-200 rounded-full overflow-hidden shadow-inner relative">
+              {/* Progress Fill */}
               <motion.div 
                 className="h-full bg-teal-500 rounded-full relative"
                 initial={{ width: 0 }}
                 animate={{ width: isPlaying ? `${progress * 100}%` : 0 }}
                 transition={{ type: "spring", bounce: 0, duration: 0.1 }}
               >
+                {/* Visual Glow */}
                 <div className="absolute right-0 top-0 bottom-0 w-2 bg-white/40 blur-[2px]" />
               </motion.div>
           </div>
 
+          {/* Draggable Handle (The Dot) */}
           {isPlaying && (
             <motion.div 
                 className="absolute w-3.5 h-3.5 bg-white border-2 border-teal-500 rounded-full shadow-md z-10"
@@ -323,6 +357,13 @@ export const AudioShowcase: React.FC = () => {
                 animate={{ scale: [1, 1.1, 1] }}
                 transition={{ repeat: Infinity, duration: 2 }}
             />
+          )}
+
+          {/* Time Tooltip Hint */}
+          {isPlaying && isCenter && (
+            <div className="absolute -bottom-5 left-1/2 -translate-x-1/2 text-[8px] font-mono font-bold text-teal-600 bg-teal-50 px-1 rounded border border-teal-100 whitespace-nowrap">
+              {Math.floor(progress * 100)}%
+            </div>
           )}
         </div>
       </div>
