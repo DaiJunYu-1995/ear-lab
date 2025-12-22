@@ -1,0 +1,121 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>εar-Lab | Epsilon Acoustic Revolution Lab</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Epsilon Acoustic Revolution Lab (εar-Lab) 是一个专注于 AI 音乐生成、声学智能与音频重构的公益学术研究团队。" />
+    <meta name="keywords" content="AI Music, Audio Generation, εar-Lab, Acoustic Intelligence, Deep Learning, VAE, Tokenizer" />
+    <meta name="author" content="εar-Lab Team" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://eps-acoustic-revolution-lab.github.io/" />
+    <meta property="og:title" content="εar-Lab | 声学革命实验室" />
+    <meta property="og:description" content="探索语义与声学的统一，通过 AI 引擎点燃声学革命。" />
+    <meta property="og:image" content="https://picsum.photos/id/101/1200/630" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="εar-Lab | Epsilon Acoustic Revolution Lab" />
+    <meta property="twitter:description" content="AI for Acoustic Intelligence & Creative Resonance." />
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>ε</text></svg>">
+
+    <!-- Performance Prefetch -->
+    <link rel="dns-prefetch" href="https://cdn.tailwindcss.com" />
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://aistudiocdn.com" />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Lato', 'sans-serif'],
+              mono: ['Roboto Mono', 'monospace'],
+            },
+            colors: {
+              'ear-teal': '#008080',
+              'ear-dark': '#1a202c',
+              'ear-light': '#f7fafc',
+            }
+          }
+        }
+      }
+    </script>
+    <style>
+      html { scroll-behavior: smooth; }
+      body { background-color: #ffffff; color: #1a202c; -webkit-font-smoothing: antialiased; }
+      .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      /* Scroll Animations */
+      @keyframes fadeInUp {
+        0% { opacity: 0; transform: translateY(40px); }
+        100% { opacity: 1; transform: translateY(0); }
+      }
+
+      @keyframes blurIn {
+        0% { opacity: 0; filter: blur(10px); transform: scale(0.95); }
+        100% { opacity: 1; filter: blur(0); transform: scale(1); }
+      }
+
+      @keyframes slideInRight {
+        0% { opacity: 0; transform: translateX(-30px); }
+        100% { opacity: 1; transform: translateX(0); }
+      }
+
+      .reveal {
+        animation-duration: 0.8s;
+        animation-fill-mode: both;
+        animation-play-state: paused;
+        animation-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+      }
+
+      .reveal.active {
+        animation-play-state: running;
+      }
+
+      .reveal-fade-up { animation-name: fadeInUp; }
+      .reveal-blur { animation-name: blurIn; }
+      .reveal-slide { animation-name: slideInRight; }
+
+      .delay-100 { animation-delay: 100ms; }
+      .delay-200 { animation-delay: 200ms; }
+      .delay-300 { animation-delay: 300ms; }
+
+      .perspective-container { perspective: 1000px; }
+      .preserve-3d { transform-style: preserve-3d; }
+      
+      /* 自定义滚动条 */
+      ::-webkit-scrollbar { width: 6px; height: 6px; }
+      ::-webkit-scrollbar-track { background: transparent; }
+      ::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+      ::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+    </style>
+  <script type="importmap">
+{
+  "imports": {
+    "react": "https://aistudiocdn.com/react@^19.2.1",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.1/",
+    "react/": "https://aistudiocdn.com/react@^19.2.1/",
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.555.0",
+    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.25"
+  }
+}
+</script>
+</head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>
