@@ -20,20 +20,20 @@ interface SongFile {
   }
 }
 
-const getBase = () => {
-  try {
-    // 使用 (import.meta as any) 避开某些环境下的静态检查
-    const env = (import.meta as any).env;
-    if (env && env.BASE_URL) {
-      return env.BASE_URL.replace(/\/$/, '');
-    }
-  } catch (e) {
-    console.warn("import.meta.env is not available, falling back to relative paths.");
-  }
-  return '.'; // 回退到相对当前 index.html 的路径
-};
+// const getBase = () => {
+//   try {
+//     // 使用 (import.meta as any) 避开某些环境下的静态检查
+//     const env = (import.meta as any).env;
+//     if (env && env.BASE_URL) {
+//       return env.BASE_URL.replace(/\/$/, '');
+//     }
+//   } catch (e) {
+//     console.warn("import.meta.env is not available, falling back to relative paths.");
+//   }
+//   return '.'; // 回退到相对当前 index.html 的路径
+// };
 
-const BASE = getBase();
+// const BASE = getBase();
 
 // Helper to generate paths automatically with Fallbacks
 const generateSong = (id: string, name: string, title: string, lang: 'Chinese' | 'English', fallbackId: number): SongFile => ({
@@ -42,9 +42,9 @@ const generateSong = (id: string, name: string, title: string, lang: 'Chinese' |
   title,
   language: lang,
   paths: {
-    cover: `${BASE}/song_corpus/picture/${id}.${name}.png`,
-    lyrics: `${BASE}/song_corpus/lyrics/${id}.${name}.txt`,
-    audio: `${BASE}/song_corpus/wav/${id}.${name}.mp3`,
+    cover: `/song_corpus/picture/${id}.${name}.png`,
+    lyrics: `/song_corpus/lyrics/${id}.${name}.txt`,
+    audio: `/song_corpus/wav/${id}.${name}.mp3`,
   },
   fallback: {
     // Picsum for images
