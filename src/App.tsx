@@ -14,7 +14,7 @@ import { Paper, Member, InnovationPoint } from './types';
 const INNOVATION_POINTS: InnovationPoint[] = [
   {
     title: "Semantic & Acoustic Unification",
-    description: "Bridging the gap between semantic understanding and high-fidelity acoustic generation through novel XY-Tokenizer architectures, enabling source-aware tokenization.",
+    description: "Bridging the gap between semantic understanding and high-fidelity acoustic generation, enabling source-aware tokenization.",
     icon: <Database className="w-6 h-6 text-teal-600" />
   },
   {
