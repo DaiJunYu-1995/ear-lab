@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/ear-lab/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Epsilon Acoustic Revolution Lab</title>
+    
+    <!-- 引入 Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- 引入 Tailwind CSS (CDN模式，与你源代码保持一致) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Lato', 'sans-serif'],
+              mono: ['Roboto Mono', 'monospace'],
+            },
+            colors: {
+              'ear-teal': '#008080',
+              'ear-dark': '#1a202c',
+              'ear-light': '#f7fafc',
+            }
+          }
+        }
+      }
+    </script>
+    
+    <!-- 你的自定义 Style -->
+    <style>
+      html { scroll-behavior: smooth; }
+      body { background-color: #ffffff; color: #1a202c; }
+      /* ...这里把 index.html 里原本的 style 标签内的 CSS 全都复制过来... */
+      /* 只要复制 <style> 标签里的内容即可，不需要 importmap */
+      .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        /* ... 其余 CSS ... */
+      }
+      .perspective-container { perspective: 1000px; }
+      .preserve-3d { transform-style: preserve-3d; }
+      /* ... 等等 ... */
+    </style>
+    <script type="module" crossorigin src="/ear-lab/assets/index-DKocMz4A.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <!-- Vite 的入口脚本 -->
+  </body>
+</html>
